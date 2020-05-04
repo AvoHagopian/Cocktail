@@ -9,6 +9,7 @@ using namespace std;
 class Recipe
 {
 private:
+    int ID;
     string name;
     vector<string> ingredientList;
     string prepStyle;
@@ -21,13 +22,13 @@ public:
     Recipe(const Recipe &other);
     Recipe();
     Recipe operator= (const Recipe &other);
-    string getName();
-    string getPrepStyle();
-    string getIceStyle();
-    string getGarnish();
-    string getGlass();
-    string getInstructions();
-    void addIngredient(string toAdd);
+    int getID() {    return ID;  };
+    string getName() {    return name;  };
+    string getPrepStyle() {    return prepStyle;    };
+    string getIceStyle() {    return iceStyle;  };
+    string getGarnish() {    return garnish;    };
+    string getGlass() {    return glass;    };
+    string getInstructions() {    return instructions;  };
     string toString();
 };
 
@@ -46,8 +47,8 @@ vector<Recipe> searchByName(string searchName, vector<Recipe> full);
 
 int main(void)
 {
-    FILE* f = fopen("Cocktails.csv", "r");
-    if (f == NULL)
+    ifstream fin("Cocktails.csv", ifstream::in);
+    if (!fin.is_open())
     {
         cout << "error: Couldn't open file\n";
         exit(1);
@@ -58,8 +59,7 @@ int main(void)
     string temp = "";
     bool done = true;
     char c;
-    fpos_t pos;
-
+    
     vector<Recipe> full;
     string tempName;
     vector<string> tempIngredient;
@@ -68,13 +68,11 @@ int main(void)
     string tempGarnish;
     string tempGlass;
     string tempInstructions;
-
-    while (done == true)
+    while (fin.peek() != EOF)
     {
-
         while (comma < 7)
         {
-            c = fgetc(f);
+            fin.get(c);
             switch (c)
             {
             case '"':
@@ -145,13 +143,9 @@ int main(void)
         comma = 0;
         temp = "";
         tempIngredient.clear();
-        c = fgetc(f);
-        if (c == EOF)
-            done = false;
-        ungetc(c, f);
     }
 
-    fclose(f);
+    fin.close();
 
     /*vector<Recipe> searchBName = searchByName("Bramble", full);
     //print recipe list
@@ -159,6 +153,11 @@ int main(void)
     {
         cout << searchBName[i].toString() << endl;
     }*/
+
+    for(int i = 0; i < full.size(); i++)
+    {
+        cout << full[i].toString() << endl;
+    }
     return 0;
 }
 
@@ -238,41 +237,6 @@ Recipe Recipe::operator= (const Recipe &other)
     return *this;
 }
 
-string Recipe::getName()
-{
-    return name;
-}
-
-string Recipe::getPrepStyle()
-{
-    return prepStyle;
-}
-
-string Recipe::getIceStyle()
-{
-    return iceStyle;
-}
-
-string Recipe::getGarnish()
-{
-    return garnish;
-}
-
-string Recipe::getGlass()
-{
-    return glass;
-}
-
-string Recipe::getInstructions()
-{
-    return instructions;
-}
-
-void Recipe::addIngredient(string toAdd)
-{
-    ingredientList.push_back(toAdd);
-}
-
 string Recipe::toString()
 {
     //string name, vector<string> ingredientvector, string prepStyle, string iceStyle, string garnish, string glass, string instructions
@@ -309,16 +273,3 @@ string Recipe::toString()
 
     return ret;
 }
-
-
-/*Ingredient::Ingredient(double amount, string unit, string ingredient)
-{
-    this->amount = amount;
-    this->unit = unit;
-    this->ingredient = ingredient;
-}
-
-string Ingredient::outputAsString()
-{
-    return to_string(amount) + " " + unit + " " + ingredient;
-}*/
