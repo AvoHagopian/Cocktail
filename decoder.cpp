@@ -46,7 +46,7 @@ vector<Recipe> searchByName(string searchName, vector<Recipe> full);
 
 int main(void)
 {
-    FILE* f = fopen("Cocktails V2 - Cocktails.csv", "r");
+    FILE* f = fopen("Cocktails.csv", "r");
     if (f == NULL)
     {
         cout << "error: Couldn't open file\n";
