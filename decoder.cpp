@@ -18,12 +18,13 @@ private:
     string glass;
     string instructions;
 public:
-    Recipe(string name, vector<string> ingredientList, string prepStyle, string iceStyle, string garnish, string glass, string instructions);
+    Recipe(int ID, string name, vector<string> ingredientList, string prepStyle, string iceStyle, string garnish, string glass, string instructions);
     Recipe(const Recipe &other);
     Recipe();
     Recipe operator= (const Recipe &other);
     int getID() {    return ID;  };
     string getName() {    return name;  };
+    vector<string> getIngredientList() {return ingredientList;  };
     string getPrepStyle() {    return prepStyle;    };
     string getIceStyle() {    return iceStyle;  };
     string getGarnish() {    return garnish;    };
@@ -32,22 +33,12 @@ public:
     string toString();
 };
 
-/*class Ingredient
-{
-    private:
-        double amount;
-        string unit;
-        string ingredient;
-    public:
-        Ingredient(double amount, string unit, string ingredient);
-        string outputAsString();
-};*/
-
 vector<Recipe> searchByName(string searchName, vector<Recipe> full);
+void save(vector<Recipe> full);
 
 int main(void)
 {
-    ifstream fin("Cocktails.csv", ifstream::in);
+    ifstream fin("Cooler Cocktails.csv", ifstream::in);
     if (!fin.is_open())
     {
         cout << "error: Couldn't open file\n";
@@ -61,6 +52,7 @@ int main(void)
     char c;
     
     vector<Recipe> full;
+    int tempID;
     string tempName;
     vector<string> tempIngredient;
     string tempPrepStyle;
@@ -68,8 +60,11 @@ int main(void)
     string tempGarnish;
     string tempGlass;
     string tempInstructions;
+
     while (fin.peek() != EOF)
     {
+        fin >> tempID;
+        fin.get(c);
         while (comma < 7)
         {
             fin.get(c);
@@ -138,7 +133,7 @@ int main(void)
                 break;
             }
         }
-        full.push_back(Recipe(tempName, tempIngredient, tempPrepStyle, tempIceStyle, tempGarnish, tempGlass, tempInstructions));
+        full.push_back(Recipe(tempID, tempName, tempIngredient, tempPrepStyle, tempIceStyle, tempGarnish, tempGlass, tempInstructions));
         quote = 0;
         comma = 0;
         temp = "";
@@ -146,7 +141,6 @@ int main(void)
     }
 
     fin.close();
-
     /*vector<Recipe> searchBName = searchByName("Bramble", full);
     //print recipe list
     for(int i = 0; i < searchBName.size(); i++)
@@ -158,6 +152,7 @@ int main(void)
     {
         cout << full[i].toString() << endl;
     }
+    //save(full);
     return 0;
 }
 
@@ -165,15 +160,9 @@ int searchByIngredient(vector<string> searchIngredient, vector<string> ingredien
 {
     int ret = 0;
     for(int i = 0; i < searchIngredient.size(); i++)
-    {
         for(int j = 0; j < ingredientList.size(); j++)
-        {
             if(ingredientList[j].find(searchIngredient[i]) != string::npos)
-            {
                 ret++;
-            }
-        }
-    }
     return ret;
 }
 
@@ -192,8 +181,54 @@ vector<Recipe> searchByName(string searchName, vector<Recipe> full)
     return ret;
 }
 
-Recipe::Recipe(string name, vector<string> ingredientList, string prepStyle, string iceStyle, string garnish, string glass, string instructions)
+void save(vector<Recipe> full)
 {
+    vector<string> temp;
+    ofstream fout("Cooler Cocktails.csv", ofstream::out);
+    
+    for(int i = 0; i < full.size(); i++)
+    {
+        temp = full[i].getIngredientList();
+        fout << to_string(full[i].getID()) + ',';
+        fout << full[i].getName() + ',';
+
+        fout << '"';
+        if(temp[0][0] == ' ')
+            fout << temp[0].substr(1);
+        else
+        {
+            if(temp[0][0] == '.')
+                fout << "0" + temp[0];
+            else
+                fout << temp[0];
+        }
+        for(int j = 1; j < temp.size(); j++)
+        {
+            if(temp[j][0] == ' ')
+                fout << "\n" + temp[j].substr(1);
+            else
+            {
+                if(temp[j][0] == '.')
+                    fout << "\n0" + temp[j];
+                else
+                    fout << "\n" + temp[j];
+            }
+        }
+        fout << "\",";
+
+        fout << full[i].getPrepStyle() + ',';
+        fout << full[i].getIceStyle() + ',';
+        fout << full[i].getGarnish() + ',';
+        fout << full[i].getGlass() + ',';
+        fout << full[i].getInstructions() + '\n';
+    }
+    fout.close();
+}
+
+
+Recipe::Recipe(int ID, string name, vector<string> ingredientList, string prepStyle, string iceStyle, string garnish, string glass, string instructions)
+{
+    this->ID = ID;
     this->name = name;
     this->ingredientList = ingredientList;
     this->prepStyle = prepStyle;
@@ -205,6 +240,7 @@ Recipe::Recipe(string name, vector<string> ingredientList, string prepStyle, str
 
 Recipe::Recipe(const Recipe &other)
 {
+    this->ID = other.ID;
     this->name = other.name;
     this->ingredientList = other.ingredientList;
     this->prepStyle = other.prepStyle;
@@ -216,6 +252,7 @@ Recipe::Recipe(const Recipe &other)
 
 Recipe::Recipe()
 {
+    this->ID = 0;
     this->name = "";
     this->ingredientList.clear();
     this->prepStyle = "";
@@ -239,9 +276,10 @@ Recipe Recipe::operator= (const Recipe &other)
 
 string Recipe::toString()
 {
-    //string name, vector<string> ingredientvector, string prepStyle, string iceStyle, string garnish, string glass, string instructions
     char end = '\n';
     string ret = "";
+
+    ret += "ID:\t\t\t\t\t" + to_string(ID) + end;
 
     ret += "Name:\t\t\t\t" + name + end;
 
