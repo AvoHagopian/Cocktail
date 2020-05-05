@@ -1,4 +1,4 @@
 Cocktails.csv
-.exe
-.obj
+*.exe
+*.obj
 output.txt

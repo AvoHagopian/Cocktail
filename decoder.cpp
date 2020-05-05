@@ -33,12 +33,25 @@ public:
     string toString();
 };
 
-vector<Recipe> searchByName(string searchName, vector<Recipe> full);
-void save(vector<Recipe> full);
+void loadRecipes(vector<Recipe> &full, string filename);
+vector<Recipe> searchRecipes(string searchName, vector<Recipe> full);
+void editRecipes(vector<Recipe> full);
+void saveRecipes(vector<Recipe> full, string filename);
+void printRecipes(vector<Recipe> full);
 
 int main(void)
 {
-    ifstream fin("Cooler Cocktails.csv", ifstream::in);
+    string filename = "Cooler Cocktails.csv";
+    vector<Recipe> full;
+    loadRecipes(full, filename);
+    printRecipes(full);
+    return 0;
+}
+
+//loads all recipes from file filename into vector full
+void loadRecipes(vector<Recipe> & full, string filename)
+{
+    ifstream fin(filename, ifstream::in);
     if (!fin.is_open())
     {
         cout << "error: Couldn't open file\n";
@@ -48,10 +61,9 @@ int main(void)
     int quote = 0;
     int comma = 0;
     string temp = "";
-    bool done = true;
     char c;
     
-    vector<Recipe> full;
+    full.clear();
     int tempID;
     string tempName;
     vector<string> tempIngredient;
@@ -141,19 +153,6 @@ int main(void)
     }
 
     fin.close();
-    /*vector<Recipe> searchBName = searchByName("Bramble", full);
-    //print recipe list
-    for(int i = 0; i < searchBName.size(); i++)
-    {
-        cout << searchBName[i].toString() << endl;
-    }*/
-
-    for(int i = 0; i < full.size(); i++)
-    {
-        cout << full[i].toString() << endl;
-    }
-    //save(full);
-    return 0;
 }
 
 int searchByIngredient(vector<string> searchIngredient, vector<string> ingredientList)
@@ -166,7 +165,7 @@ int searchByIngredient(vector<string> searchIngredient, vector<string> ingredien
     return ret;
 }
 
-vector<Recipe> searchByName(string searchName, vector<Recipe> full)
+vector<Recipe> searchRecipes(string searchName, vector<Recipe> full)
 {
     vector<Recipe> ret;
     Recipe temp;
@@ -181,10 +180,16 @@ vector<Recipe> searchByName(string searchName, vector<Recipe> full)
     return ret;
 }
 
-void save(vector<Recipe> full)
+void editRecipes(vector<Recipe> full)
+{
+
+}
+
+//saves list of all vectors full in file filename
+void saveRecipes(vector<Recipe> full, string filename)
 {
     vector<string> temp;
-    ofstream fout("Cooler Cocktails.csv", ofstream::out);
+    ofstream fout(filename, ofstream::out);
     
     for(int i = 0; i < full.size(); i++)
     {
@@ -223,6 +228,13 @@ void save(vector<Recipe> full)
         fout << full[i].getInstructions() + '\n';
     }
     fout.close();
+}
+
+//prints list of all recipes in vector full
+void printRecipes(vector<Recipe> full)
+{
+    for(int i = 0; i < full.size(); i++)
+        cout << full[i].toString() << endl;
 }
 
 
