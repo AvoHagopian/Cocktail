@@ -22,6 +22,7 @@ public:
     Recipe(const Recipe &other);
     Recipe();
     Recipe operator= (const Recipe &other);
+    bool operator< (const Recipe &other);
     int getID() {    return ID;  };
     string getName() {    return name;  };
     vector<string> getIngredientList() {return ingredientList;  };
@@ -35,7 +36,7 @@ public:
 
 void loadRecipes(vector<Recipe> &full, string filename);
 vector<Recipe> searchRecipes(string searchName, vector<Recipe> full);
-void editRecipes(vector<Recipe> full);
+void editRecipes(vector<Recipe> full, int ID);
 void saveRecipes(vector<Recipe> full, string filename);
 void printRecipes(vector<Recipe> full);
 
@@ -180,9 +181,29 @@ vector<Recipe> searchRecipes(string searchName, vector<Recipe> full)
     return ret;
 }
 
-void editRecipes(vector<Recipe> full)
+void editRecipes(vector<Recipe> full, int ID)
 {
-
+    char option;
+    switch (option)
+    {
+        case 'A':
+            //edit name
+        case 'B':
+            //edit ingredient list
+        case 'C':
+            //edit prep style
+        case 'D':
+            //edit ice style
+        case 'E':
+            //edit garnish
+        case 'F':
+            //edit glass
+        case 'G':
+            //edit instructions
+        default:
+            break;
+    }
+    //
 }
 
 //saves list of all vectors full in file filename
@@ -284,6 +305,14 @@ Recipe Recipe::operator= (const Recipe &other)
     this->glass = other.glass;
     this->instructions = other.instructions;
     return *this;
+}
+
+bool Recipe::operator< (const Recipe &other)
+{
+    if(this->name.compare(other.name) <= 0)
+        return false;
+    else
+        return true;
 }
 
 string Recipe::toString()
