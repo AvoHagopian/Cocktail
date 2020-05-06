@@ -23,6 +23,7 @@ public:
     Recipe();
     Recipe operator= (const Recipe &other);
     bool operator< (const Recipe &other);
+
     int getID() {    return ID;  };
     string getName() {    return name;  };
     vector<string> getIngredientList() {return ingredientList;  };
@@ -31,26 +32,36 @@ public:
     string getGarnish() {    return garnish;    };
     string getGlass() {    return glass;    };
     string getInstructions() {    return instructions;  };
+    
+    void setName(string name);
+    void setIngredientList(vector<string> ingredientList);
+    void setPrepStyle(string prepStyle);
+    void setIceStyle(string iceStyle);
+    void setGarnish(string garnish);
+    void setGlass(string glass);
+    void setInstructions(string instructions);
+
     string toString();
 };
 
-void loadRecipes(vector<Recipe> &full, string filename);
-vector<Recipe> searchRecipes(string searchName, vector<Recipe> full);
-void editRecipes(vector<Recipe> full, int ID);
-void saveRecipes(vector<Recipe> full, string filename);
-void printRecipes(vector<Recipe> full);
+void loadRecipe(vector<Recipe> &full, string filename);
+vector<Recipe> searchRecipe(string searchName, vector<Recipe> full);
+void addRecipe(vector<Recipe> full);
+void editRecipe(vector<Recipe> full, int ID);
+void saveRecipe(vector<Recipe> full, string filename);
+void printRecipe(vector<Recipe> full);
 
 int main(void)
 {
     string filename = "Cooler Cocktails.csv";
     vector<Recipe> full;
-    loadRecipes(full, filename);
-    printRecipes(full);
+    loadRecipe(full, filename);
+    printRecipe(full);
     return 0;
 }
 
 //loads all recipes from file filename into vector full
-void loadRecipes(vector<Recipe> & full, string filename)
+void loadRecipe(vector<Recipe> & full, string filename)
 {
     ifstream fin(filename, ifstream::in);
     if (!fin.is_open())
@@ -156,7 +167,7 @@ void loadRecipes(vector<Recipe> & full, string filename)
     fin.close();
 }
 
-int searchByIngredient(vector<string> searchIngredient, vector<string> ingredientList)
+/*int searchByIngredient(vector<string> searchIngredient, vector<string> ingredientList)
 {
     int ret = 0;
     for(int i = 0; i < searchIngredient.size(); i++)
@@ -164,9 +175,9 @@ int searchByIngredient(vector<string> searchIngredient, vector<string> ingredien
             if(ingredientList[j].find(searchIngredient[i]) != string::npos)
                 ret++;
     return ret;
-}
+}*/
 
-vector<Recipe> searchRecipes(string searchName, vector<Recipe> full)
+vector<Recipe> searchRecipe(string searchName, vector<Recipe> full)
 {
     vector<Recipe> ret;
     Recipe temp;
@@ -181,33 +192,130 @@ vector<Recipe> searchRecipes(string searchName, vector<Recipe> full)
     return ret;
 }
 
-void editRecipes(vector<Recipe> full, int ID)
+void addRecipe(vector<Recipe> full)
 {
-    char option;
-    switch (option)
+
+}
+
+//edit Recipe by each variable
+void editRecipe(vector<Recipe> full, int ID)
+{
+    string s = "";
+    Recipe temp = full[ID];
+
+    string tempName;
+    vector<string> tempIngredient = temp.getIngredientList();
+    string tempPrepStyle;
+    string tempIceStyle;
+    string tempGarnish;
+    string tempGlass;
+    string tempInstructions;
+
+    int option = 1;
+    int list = 0;
+
+    while(option != 0)
     {
-        case 'A':
-            //edit name
-        case 'B':
-            //edit ingredient list
-        case 'C':
-            //edit prep style
-        case 'D':
-            //edit ice style
-        case 'E':
-            //edit garnish
-        case 'F':
-            //edit glass
-        case 'G':
-            //edit instructions
-        default:
-            break;
+        cout << temp.toString() << endl;
+        cout << "What would you like to edit? (Type the corresponding number and hit enter or 0 to quit)\n";
+        cout << "(1)\tName\n";
+        cout << "(2)\tIngredient List\n";
+        cout << "(3)\tPreperation Style\n";
+        cout << "(4)\tIce Style\n";
+        cout << "(5)\tGarnish\n";
+        cout << "(6)\tGlass\n";
+        cout << "(7)\tInstructions\n";
+        cin >> option;
+
+        switch (option)
+        {
+            case 0:
+                //quit
+                break;
+            case 1:
+                //edit name
+                cout << "Current Name:\t\t" << temp.getName() << endl;
+                cout << "Change to:";
+                cin >> tempName;
+                temp.setName(tempName);
+                break;
+            case 2:
+                //edit ingredient list
+                while(list != 0)
+                {
+                    cout << "Current Ingredient List:\n";
+                    for(int i = 0; i < tempIngredient.size(); i++)
+                        cout << "(" << i + 1 << ")\t" << tempIngredient[i] << endl;
+
+                    cout << "If you wish to change a specific ingredient, type the number before the ingredient.\n";
+                    cout << "If you wish to add an ingredient, type the corresponding number.\n";
+                    cout << "(If you wish to quit, type 0)\n";
+                    cin >> list;
+                    if(list < 0 || list > tempIngredient.size() + 1)
+                        cout << "Invalid option. Please choose again.\n";
+                    else
+                    {
+                        if(list != 0)
+                        {
+                            if(list == tempIngredient.size() + 1)
+                            {
+                                cout << "Enter the value, unit, and ingredient you would like to add and press enter.\n";
+                                getline(cin, s);
+                                tempIngredient.push_back(s);
+                            }
+                            else
+                            {
+                                cout << "Enter the value, unit, and ingredient you would like to change to and press enter.\n";
+                                getline(cin, tempIngredient[list - 1]);
+                            }
+                            temp.setIngredientList(tempIngredient);
+                        }
+                    }
+                }
+                break;
+            case 3:
+                //edit prep style
+                cout << "Current Preperation Style:\t\t" << temp.getPrepStyle() << endl;
+                cout << "Change to:";
+                cin >> tempPrepStyle;
+                temp.setPrepStyle(tempPrepStyle);
+                break;
+            case 4:
+                //edit ice style
+                cout << "Current Ice Style:\t\t" << temp.getIceStyle() << endl;
+                cout << "Change to:";
+                cin >> tempIceStyle;
+                temp.setIceStyle(tempIceStyle);
+                break;
+            case 5:
+                //edit garnish
+                cout << "Current Garnish:\t\t" << temp.getGarnish() << endl;
+                cout << "Change to:";
+                cin >> tempGarnish;
+                temp.setGarnish(tempGarnish);
+                break;
+            case 6:
+                //edit glass
+                cout << "Current Glass:\t\t" << temp.getGlass() << endl;
+                cout << "Change to:";
+                cin >> tempGlass;
+                temp.setGlass(tempGlass);
+                break;
+            case 7:
+                //edit instructions
+                cout << "Current Instructions:\t\t" << temp.getInstructions() << endl;
+                cout << "Change to:";
+                cin >> tempInstructions;
+                temp.setInstructions(tempInstructions);
+                break;
+            default:
+                break;
+        }
     }
-    //
 }
 
 //saves list of all vectors full in file filename
-void saveRecipes(vector<Recipe> full, string filename)
+void saveRecipe(vector<Recipe> full, string filename)
 {
     vector<string> temp;
     ofstream fout(filename, ofstream::out);
@@ -252,13 +360,13 @@ void saveRecipes(vector<Recipe> full, string filename)
 }
 
 //prints list of all recipes in vector full
-void printRecipes(vector<Recipe> full)
+void printRecipe(vector<Recipe> full)
 {
     for(int i = 0; i < full.size(); i++)
         cout << full[i].toString() << endl;
 }
 
-
+//variable specified constructor
 Recipe::Recipe(int ID, string name, vector<string> ingredientList, string prepStyle, string iceStyle, string garnish, string glass, string instructions)
 {
     this->ID = ID;
@@ -271,6 +379,7 @@ Recipe::Recipe(int ID, string name, vector<string> ingredientList, string prepSt
     this->instructions = instructions;
 }
 
+//object specified constructor
 Recipe::Recipe(const Recipe &other)
 {
     this->ID = other.ID;
@@ -283,6 +392,7 @@ Recipe::Recipe(const Recipe &other)
     this->instructions = other.instructions;
 }
 
+//default constructor
 Recipe::Recipe()
 {
     this->ID = 0;
@@ -295,6 +405,7 @@ Recipe::Recipe()
     this->instructions = "";
 }
 
+//equal operator overload
 Recipe Recipe::operator= (const Recipe &other)
 {
     this->name = other.name;
@@ -307,6 +418,7 @@ Recipe Recipe::operator= (const Recipe &other)
     return *this;
 }
 
+//less than operator overload
 bool Recipe::operator< (const Recipe &other)
 {
     if(this->name.compare(other.name) <= 0)
@@ -315,6 +427,7 @@ bool Recipe::operator< (const Recipe &other)
         return true;
 }
 
+//convert Recipe object to string
 string Recipe::toString()
 {
     char end = '\n';
@@ -351,4 +464,94 @@ string Recipe::toString()
     ret += end;
 
     return ret;
+}
+
+
+//sets name to lowercase string name
+void Recipe::setName(string name)
+{
+    string s = "";
+    for(int i = 0; i < name.length(); i++)
+    {
+        if(name[i] >= 'A' && name[i] <= 'Z')
+            s += name[i] + 32;
+        else
+            s += name[i];
+    }
+    this->name = s;
+}
+
+void Recipe::setIngredientList(vector<string> ingredientList)
+{
+
+}
+
+//sets preperation style to lowercase string prepStyle
+void Recipe::setPrepStyle(string prepStyle)
+{
+    string s = "";
+    for(int i = 0; i < prepStyle.length(); i++)
+    {
+        if(prepStyle[i] >= 'A' && prepStyle[i] <= 'Z')
+            s += prepStyle[i] + 32;
+        else
+            s += prepStyle[i];
+    }
+    this->prepStyle = s;
+}
+
+//sets ice style to lowercase string iceStyle
+void Recipe::setIceStyle(string iceStyle)
+{
+    string s = "";
+    for(int i = 0; i < iceStyle.length(); i++)
+    {
+        if(iceStyle[i] >= 'A' && iceStyle[i] <= 'Z')
+            s += iceStyle[i] + 32;
+        else
+            s += iceStyle[i];
+    }
+    this->iceStyle = s;
+}
+
+//sets garnish to lowercase string garnish
+void Recipe::setGarnish(string garnish)
+{
+    string s = "";
+    for(int i = 0; i < garnish.length(); i++)
+    {
+        if(garnish[i] >= 'A' && garnish[i] <= 'Z')
+            s += garnish[i] + 32;
+        else
+            s += garnish[i];
+    }
+    this->garnish = s;
+}
+
+//sets glass to lowercase string glass
+void Recipe::setGlass(string glass)
+{
+    string s = "";
+    for(int i = 0; i < glass.length(); i++)
+    {
+        if(glass[i] >= 'A' && glass[i] <= 'Z')
+            s += glass[i] + 32;
+        else
+            s += glass[i];
+    }
+    this->glass = s;
+}
+
+//sets instructions to lowercase string instructions
+void Recipe::setInstructions(string instructions)
+{
+    string s = "";
+    for(int i = 0; i < instructions.length(); i++)
+    {
+        if(instructions[i] >= 'A' && instructions[i] <= 'Z')
+            s += instructions[i] + 32;
+        else
+            s += instructions[i];
+    }
+    this->instructions = s;
 }
