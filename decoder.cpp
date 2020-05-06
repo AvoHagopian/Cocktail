@@ -44,6 +44,29 @@ public:
     string toString();
 };
 
+class Ingredient
+{
+private:
+    double amount;
+    string unit;
+    string ingredient;
+public:
+    Ingredient();
+    Ingredient(double amount, string unit, string ingredient);
+    Ingredient(const Ingredient &other);
+    Ingredient operator=(const Ingredient &other);
+
+    double getAmount(){ return amount;  };
+    string getUnit(){   return unit;    };
+    string getIngredient(){ return ingredient;  };
+
+    void setAmount(double amount){  this->amount = amount;  }
+    void setUnit(string unit){  this->unit = unit;  }
+    void setIngredient(string ingredient){  this->ingredient = ingredient;  }
+
+    string toString();
+};
+
 void loadRecipe(vector<Recipe> &full, string filename);
 vector<Recipe> searchRecipe(string searchName, vector<Recipe> full);
 void addRecipe(vector<Recipe> full);
@@ -467,7 +490,7 @@ string Recipe::toString()
 }
 
 
-//sets name to lowercase string name
+//sets name to string name
 void Recipe::setName(string name)
 {
     string s = "";
@@ -486,7 +509,7 @@ void Recipe::setIngredientList(vector<string> ingredientList)
 
 }
 
-//sets preperation style to lowercase string prepStyle
+//sets preperation style to string prepStyle
 void Recipe::setPrepStyle(string prepStyle)
 {
     string s = "";
@@ -500,7 +523,7 @@ void Recipe::setPrepStyle(string prepStyle)
     this->prepStyle = s;
 }
 
-//sets ice style to lowercase string iceStyle
+//sets ice style to string iceStyle
 void Recipe::setIceStyle(string iceStyle)
 {
     string s = "";
@@ -514,7 +537,7 @@ void Recipe::setIceStyle(string iceStyle)
     this->iceStyle = s;
 }
 
-//sets garnish to lowercase string garnish
+//sets garnish to string garnish
 void Recipe::setGarnish(string garnish)
 {
     string s = "";
@@ -528,7 +551,7 @@ void Recipe::setGarnish(string garnish)
     this->garnish = s;
 }
 
-//sets glass to lowercase string glass
+//sets glass to string glass
 void Recipe::setGlass(string glass)
 {
     string s = "";
@@ -542,7 +565,7 @@ void Recipe::setGlass(string glass)
     this->glass = s;
 }
 
-//sets instructions to lowercase string instructions
+//sets instructions to string instructions
 void Recipe::setInstructions(string instructions)
 {
     string s = "";
@@ -554,4 +577,16 @@ void Recipe::setInstructions(string instructions)
             s += instructions[i];
     }
     this->instructions = s;
+}
+
+//returns object Ingredient as a string
+string Ingredient::toString()
+{
+    string s = "";
+    if(amount > 0)
+        s += to_string(amount);
+    if(unit.compare("NA") != 0)
+        s += unit;
+    s += ingredient;
+    return s;
 }
