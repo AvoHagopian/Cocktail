@@ -69,7 +69,6 @@ public:
 
 void loadRecipe(vector<Recipe> &full, string filename);
 vector<Recipe> searchRecipe(string searchWord, vector<Recipe> full, int option);
-void addRecipe(vector<Recipe> full);
 void editRecipe(vector<Recipe> full, int ID);
 void saveRecipe(vector<Recipe> full, string filename);
 void printRecipe(vector<Recipe> full);
@@ -258,11 +257,6 @@ vector<Recipe> searchRecipe(string searchWord, vector<Recipe> full, int option)
             break;
     }
     return ret;
-}
-
-void addRecipe(vector<Recipe> full)
-{
-
 }
 
 //edit Recipe by each variable
