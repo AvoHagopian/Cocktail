@@ -33,13 +33,13 @@ public:
     string getGlass() {    return glass;    };
     string getInstructions() {    return instructions;  };
     
-    void setName(string name);
-    void setIngredientList(vector<string> ingredientList);
-    void setPrepStyle(string prepStyle);
-    void setIceStyle(string iceStyle);
-    void setGarnish(string garnish);
-    void setGlass(string glass);
-    void setInstructions(string instructions);
+    void setName(string name) { this->name = name;  };
+    void setIngredientList(vector<string> ingredientList) { this->ingredientList = ingredientList;  };
+    void setPrepStyle(string prepStyle) {   this->prepStyle = prepStyle;    };
+    void setIceStyle(string iceStyle) { this->iceStyle = iceStyle;  };
+    void setGarnish(string garnish) {   this->garnish = garnish;    };
+    void setGlass(string glass) {   this->glass = glass;    };
+    void setInstructions(string instructions) { this->instructions = instructions;  };
 
     string toString();
 };
@@ -68,11 +68,12 @@ public:
 };
 
 void loadRecipe(vector<Recipe> &full, string filename);
-vector<Recipe> searchRecipe(string searchName, vector<Recipe> full);
+vector<Recipe> searchRecipe(string searchWord, vector<Recipe> full, int option);
 void addRecipe(vector<Recipe> full);
 void editRecipe(vector<Recipe> full, int ID);
 void saveRecipe(vector<Recipe> full, string filename);
 void printRecipe(vector<Recipe> full);
+string toLower(string s);
 
 int main(void)
 {
@@ -190,27 +191,71 @@ void loadRecipe(vector<Recipe> & full, string filename)
     fin.close();
 }
 
-/*int searchByIngredient(vector<string> searchIngredient, vector<string> ingredientList)
+//search Recipe vector full for searchWord using option 0 for name, 1 for ingredients, 2 for garnish, or 3 for glass
+vector<Recipe> searchRecipe(string searchWord, vector<Recipe> full, int option)
 {
-    int ret = 0;
-    for(int i = 0; i < searchIngredient.size(); i++)
-        for(int j = 0; j < ingredientList.size(); j++)
-            if(ingredientList[j].find(searchIngredient[i]) != string::npos)
-                ret++;
-    return ret;
-}*/
-
-vector<Recipe> searchRecipe(string searchName, vector<Recipe> full)
-{
+    //Recipe(tempID, tempName, tempIngredient, tempPrepStyle, tempIceStyle, tempGarnish, tempGlass, tempInstructions));
     vector<Recipe> ret;
     Recipe temp;
-    for(int i = 0; i < full.size(); i++)
+
+    switch(option)
     {
-        if(full[i].getName().find(searchName) != string::npos)
-        {
-            temp = full[i];
-            ret.push_back(temp);
-        }
+        case 0:
+            //search by name
+            for(int i = 0; i < full.size(); i++)
+            {
+                if(toLower(full[i].getName()).find(toLower(searchWord)) != string::npos)
+                {
+                    temp = full[i];
+                    ret.push_back(temp);
+                }
+            }
+            break;
+        case 1:
+            //search by ingredient
+            bool check = false;
+            for(int i = 0; i < full.size(); i++)
+            {
+                vector<string> tempList = full[i].getIngredientList();
+                for(int j = 0; j < tempList.size(); j++)
+                {
+                    if(toLower(tempList[j]).find(toLower(searchWord)) != string::npos)
+                    {
+                        check = true;
+                    }
+                }
+                if(check)
+                {
+                    temp = full[i];
+                    ret.push_back(temp);
+                    check = false;
+                }
+            }
+            break;
+        case 2:
+            //search by garnish
+            for(int i = 0; i < full.size(); i++)
+            {
+                if(toLower(full[i].getGarnish()).find(toLower(searchWord)) != string::npos)
+                {
+                    temp = full[i];
+                    ret.push_back(temp);
+                }
+            }
+            break;
+        case 3:
+            //search by glass
+            for(int i = 0; i < full.size(); i++)
+            {
+                if(toLower(full[i].getGlass()).find(toLower(searchWord)) != string::npos)
+                {
+                    temp = full[i];
+                    ret.push_back(temp);
+                }
+            }
+            break;
+        default:
+            break;
     }
     return ret;
 }
@@ -489,96 +534,6 @@ string Recipe::toString()
     return ret;
 }
 
-
-//sets name to string name
-void Recipe::setName(string name)
-{
-    string s = "";
-    for(int i = 0; i < name.length(); i++)
-    {
-        if(name[i] >= 'A' && name[i] <= 'Z')
-            s += name[i] + 32;
-        else
-            s += name[i];
-    }
-    this->name = s;
-}
-
-void Recipe::setIngredientList(vector<string> ingredientList)
-{
-
-}
-
-//sets preperation style to string prepStyle
-void Recipe::setPrepStyle(string prepStyle)
-{
-    string s = "";
-    for(int i = 0; i < prepStyle.length(); i++)
-    {
-        if(prepStyle[i] >= 'A' && prepStyle[i] <= 'Z')
-            s += prepStyle[i] + 32;
-        else
-            s += prepStyle[i];
-    }
-    this->prepStyle = s;
-}
-
-//sets ice style to string iceStyle
-void Recipe::setIceStyle(string iceStyle)
-{
-    string s = "";
-    for(int i = 0; i < iceStyle.length(); i++)
-    {
-        if(iceStyle[i] >= 'A' && iceStyle[i] <= 'Z')
-            s += iceStyle[i] + 32;
-        else
-            s += iceStyle[i];
-    }
-    this->iceStyle = s;
-}
-
-//sets garnish to string garnish
-void Recipe::setGarnish(string garnish)
-{
-    string s = "";
-    for(int i = 0; i < garnish.length(); i++)
-    {
-        if(garnish[i] >= 'A' && garnish[i] <= 'Z')
-            s += garnish[i] + 32;
-        else
-            s += garnish[i];
-    }
-    this->garnish = s;
-}
-
-//sets glass to string glass
-void Recipe::setGlass(string glass)
-{
-    string s = "";
-    for(int i = 0; i < glass.length(); i++)
-    {
-        if(glass[i] >= 'A' && glass[i] <= 'Z')
-            s += glass[i] + 32;
-        else
-            s += glass[i];
-    }
-    this->glass = s;
-}
-
-//sets instructions to string instructions
-void Recipe::setInstructions(string instructions)
-{
-    string s = "";
-    for(int i = 0; i < instructions.length(); i++)
-    {
-        if(instructions[i] >= 'A' && instructions[i] <= 'Z')
-            s += instructions[i] + 32;
-        else
-            s += instructions[i];
-    }
-    this->instructions = s;
-}
-
 //returns object Ingredient as a string
 string Ingredient::toString()
 {
@@ -589,4 +544,19 @@ string Ingredient::toString()
         s += unit;
     s += ingredient;
     return s;
+}
+
+//returns lowercase version of string s
+string toLower(string s)
+{
+    string ret;
+    for(int i = 0; i < s.length(); i++)
+    {
+        if(s[i] >= 'A' && s[i] <= 'Z')
+            ret += s[i] + 32;
+        else
+            ret += s[i];
+        
+    }
+    return ret;
 }
