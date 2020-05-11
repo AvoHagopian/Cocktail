@@ -79,6 +79,9 @@ int main(void)
     string filename = "Cooler Cocktails.csv";
     vector<Recipe> full;
     loadRecipe(full, filename);
+    //printRecipe(searchRecipe("collins", full, 3));
+    //saveRecipe();
+    editRecipe(full, 69);
     printRecipe(full);
     return 0;
 }
@@ -196,6 +199,7 @@ vector<Recipe> searchRecipe(string searchWord, vector<Recipe> full, int option)
     //Recipe(tempID, tempName, tempIngredient, tempPrepStyle, tempIceStyle, tempGarnish, tempGlass, tempInstructions));
     vector<Recipe> ret;
     Recipe temp;
+    bool check = false;
 
     switch(option)
     {
@@ -212,7 +216,6 @@ vector<Recipe> searchRecipe(string searchWord, vector<Recipe> full, int option)
             break;
         case 1:
             //search by ingredient
-            bool check = false;
             for(int i = 0; i < full.size(); i++)
             {
                 vector<string> tempList = full[i].getIngredientList();
@@ -262,6 +265,7 @@ vector<Recipe> searchRecipe(string searchWord, vector<Recipe> full, int option)
 //edit Recipe by each variable
 void editRecipe(vector<Recipe> full, int ID)
 {
+    //shits super fucked yo
     string s = "";
     Recipe temp = full[ID];
 
@@ -274,7 +278,7 @@ void editRecipe(vector<Recipe> full, int ID)
     string tempInstructions;
 
     int option = 1;
-    int list = 0;
+    int list = 1;
 
     while(option != 0)
     {
@@ -310,9 +314,10 @@ void editRecipe(vector<Recipe> full, int ID)
                         cout << "(" << i + 1 << ")\t" << tempIngredient[i] << endl;
 
                     cout << "If you wish to change a specific ingredient, type the number before the ingredient.\n";
-                    cout << "If you wish to add an ingredient, type the corresponding number.\n";
+                    cout << "If you wish to add an ingredient, type " << tempIngredient.size() + 1 << endl;
                     cout << "(If you wish to quit, type 0)\n";
                     cin >> list;
+                    cin.ignore(1, '\n');
                     if(list < 0 || list > tempIngredient.size() + 1)
                         cout << "Invalid option. Please choose again.\n";
                     else
@@ -470,6 +475,7 @@ Recipe::Recipe()
 //equal operator overload
 Recipe Recipe::operator= (const Recipe &other)
 {
+    this->ID = other.ID;
     this->name = other.name;
     this->ingredientList = other.ingredientList;
     this->prepStyle = other.prepStyle;
