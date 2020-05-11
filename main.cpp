@@ -4,46 +4,11 @@
 #include <cmath>
 #include <vector>
 #include <iomanip>
+#include "recipe.h"
 
 using namespace std;
 
-class Recipe
-{
-private:
-    int ID;
-    string name;
-    vector<string> ingredientList;
-    string prepStyle;
-    string iceStyle;
-    string garnish;
-    string glass;
-    string instructions;
-public:
-    Recipe(int ID, string name, vector<string> ingredientList, string prepStyle, string iceStyle, string garnish, string glass, string instructions);
-    Recipe(const Recipe &other);
-    Recipe();
-    Recipe operator= (const Recipe &other);
-    bool operator< (const Recipe &other);
-
-    int getID() {    return ID;  };
-    string getName() {    return name;  };
-    vector<string> getIngredientList() {return ingredientList;  };
-    string getPrepStyle() {    return prepStyle;    };
-    string getIceStyle() {    return iceStyle;  };
-    string getGarnish() {    return garnish;    };
-    string getGlass() {    return glass;    };
-    string getInstructions() {    return instructions;  };
-    
-    void setName(string name) { this->name = name;  };
-    void setIngredientList(vector<string> ingredientList) { this->ingredientList = ingredientList;  };
-    void setPrepStyle(string prepStyle) {   this->prepStyle = prepStyle;    };
-    void setIceStyle(string iceStyle) { this->iceStyle = iceStyle;  };
-    void setGarnish(string garnish) {   this->garnish = garnish;    };
-    void setGlass(string glass) {   this->glass = glass;    };
-    void setInstructions(string instructions) { this->instructions = instructions;  };
-};
-
-class Ingredient
+/*class Ingredient
 {
 private:
     double amount;
@@ -64,7 +29,7 @@ public:
     void setIngredient(string ingredient){  this->ingredient = ingredient;  }
 
     string toString();
-};
+};*/
 
 void loadRecipe(vector<Recipe> &full, string filename);
 void searchRecipe(vector<Recipe> full);
@@ -541,80 +506,6 @@ void printRecipeList(vector<Recipe> full)
         printRecipe(full[i]);
 }
 
-//variable specified constructor
-Recipe::Recipe(int ID, string name, vector<string> ingredientList, string prepStyle, string iceStyle, string garnish, string glass, string instructions)
-{
-    this->ID = ID;
-    this->name = name;
-    this->ingredientList = ingredientList;
-    this->prepStyle = prepStyle;
-    this->iceStyle = iceStyle;
-    this->garnish = garnish;
-    this->glass = glass;
-    this->instructions = instructions;
-}
-
-//object specified constructor
-Recipe::Recipe(const Recipe &other)
-{
-    this->ID = other.ID;
-    this->name = other.name;
-    this->ingredientList = other.ingredientList;
-    this->prepStyle = other.prepStyle;
-    this->iceStyle = other.iceStyle;
-    this->garnish = other.garnish;
-    this->glass = other.glass;
-    this->instructions = other.instructions;
-}
-
-//default constructor
-Recipe::Recipe()
-{
-    this->ID = 0;
-    this->name = "";
-    this->ingredientList.clear();
-    this->prepStyle = "";
-    this->iceStyle = "";
-    this->garnish = "";
-    this->glass = "";
-    this->instructions = "";
-}
-
-//equal operator overload
-Recipe Recipe::operator= (const Recipe &other)
-{
-    this->ID = other.ID;
-    this->name = other.name;
-    this->ingredientList = other.ingredientList;
-    this->prepStyle = other.prepStyle;
-    this->iceStyle = other.iceStyle;
-    this->garnish = other.garnish;
-    this->glass = other.glass;
-    this->instructions = other.instructions;
-    return *this;
-}
-
-//less than operator overload
-bool Recipe::operator< (const Recipe &other)
-{
-    if(this->name.compare(other.name) <= 0)
-        return false;
-    else
-        return true;
-}
-
-//returns object Ingredient as a string
-string Ingredient::toString()
-{
-    string s = "";
-    if(amount > 0)
-        s += to_string(amount);
-    if(unit.compare("NA") != 0)
-        s += unit;
-    s += ingredient;
-    return s;
-}
-
 //returns lowercase version of string s
 string toLower(string s)
 {
@@ -629,3 +520,15 @@ string toLower(string s)
     }
     return ret;
 }
+
+/*//returns object Ingredient as a string
+string Ingredient::toString()
+{
+    string s = "";
+    if(amount > 0)
+        s += to_string(amount);
+    if(unit.compare("NA") != 0)
+        s += unit;
+    s += ingredient;
+    return s;
+}*/
