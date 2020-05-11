@@ -41,8 +41,6 @@ public:
     void setGarnish(string garnish) {   this->garnish = garnish;    };
     void setGlass(string glass) {   this->glass = glass;    };
     void setInstructions(string instructions) { this->instructions = instructions;  };
-
-    //string toString();
 };
 
 class Ingredient
@@ -69,22 +67,69 @@ public:
 };
 
 void loadRecipe(vector<Recipe> &full, string filename);
-vector<Recipe> searchRecipe(string searchWord, vector<Recipe> full, int option);
-void editRecipe(vector<Recipe> full, int ID);
+void searchRecipe(vector<Recipe> full);
+void editRecipe(Recipe & R);
 void saveRecipe(vector<Recipe> full, string filename);
-void printRecipe(Recipe full);
+void printRecipe(Recipe R);
+void printRecipeList(vector<Recipe> full);
 string toLower(string s);
 
 int main(void)
 {
-    string filename = "Cooler Cocktails.csv";
+    cout << "\n \\       /	Cocktail Guide\n  \\     /\n   \\   /\n    \\ /\n     |\n     |\n     |\n     |\n  _ _|_ _\n" << endl;
+
+    string inFilename = "";
+    string outFilename = "";
+    cout << "Welcome to your Cocktail Guide!" << endl;
+    cout << "Please type the name of the file you would like to read from:" << endl;
+    getline(cin, inFilename);
+
     vector<Recipe> full;
-    loadRecipe(full, filename);
-    //printRecipe(searchRecipe("collins", full, 3));
-    //saveRecipe();
-    //editRecipe(full, 69);
-    for(int i = 0; i < full.size(); i++)
-        printRecipe(full[i]);
+    loadRecipe(full, inFilename);
+
+    int choice = -1;
+    int id = 0;
+    while(choice != 0)
+    {
+        cout << "What would you like to do? (Type the corresponding value)" << endl;
+        cout << "(1) Print recipe list." << endl;
+        cout << "(2) Search recipe list." << endl;
+        cout << "(3) Edit recipe." << endl;
+        cout << "(4) Save changes." << endl;
+        cout << "(0) Quit" << endl;
+
+        cin >> choice;
+
+        switch (choice)
+        {
+            case 1:
+                printRecipeList(full);
+                break;
+            case 2:
+                searchRecipe(full);
+                break;
+            case 3:
+                cout << "Please enter the ID of the recipe you wish to edit:" << endl;
+                cin >> id;
+                if(id < 1 || id > full.size())
+                    cout << "You fucked up boy" << endl;
+                else
+                    editRecipe(full[id - 1]);
+                break;
+            case 4:
+                cout << "Please type the name of the file you would like to save to:" << endl;
+                cin.ignore(1, '\n');
+                getline(cin, outFilename);
+                saveRecipe(full, outFilename);
+                break;
+            case 0:
+                break;
+            default:
+                cout << "Please enter a valid response fuckboy" << endl;
+                break;
+        }
+
+    }
     return 0;
 }
 
@@ -94,7 +139,7 @@ void loadRecipe(vector<Recipe> & full, string filename)
     ifstream fin(filename, ifstream::in);
     if (!fin.is_open())
     {
-        cout << "error: Couldn't open file\n";
+        cout << "error: Couldn't open file" << filename << endl;
         exit(1);
     }
 
@@ -195,104 +240,114 @@ void loadRecipe(vector<Recipe> & full, string filename)
     fin.close();
 }
 
-//search Recipe vector full for searchWord using option 0 for name, 1 for ingredients, 2 for garnish, or 3 for glass
-vector<Recipe> searchRecipe(string searchWord, vector<Recipe> full, int option)
+//search Recipe vector full for searchWord using option 1 for name, 2 for ingredients, 3 for garnish, or 4 for glass then prints narrowed list
+void searchRecipe(vector<Recipe> full)
 {
-    //Recipe(tempID, tempName, tempIngredient, tempPrepStyle, tempIceStyle, tempGarnish, tempGlass, tempInstructions));
-    vector<Recipe> ret;
+    vector<Recipe> narrow;
     Recipe temp;
     bool check = false;
+    int option = 0;
+    string searchWord = "";
 
-    switch(option)
+    cout << "What would you like to search by? (Type the corresponding value)" << endl;
+    cout << "(1) Name" << endl;
+    cout << "(2) Ingredients" << endl;
+    cout << "(3) Garnish" << endl;
+    cout << "(4) Glass" << endl;
+
+    cin >> option;
+    if(option < 1 || option > 4)
+        cout << "Invalid search option, returning to main menu" << endl;
+    else
     {
-        case 0:
-            //search by name
-            for(int i = 0; i < full.size(); i++)
-            {
-                if(toLower(full[i].getName()).find(toLower(searchWord)) != string::npos)
+        cout << "Type in search phrase and hit enter:";
+
+        cin.ignore(1, '\n');
+        getline(cin, searchWord);
+
+        switch(option)
+        {
+            case 1:
+                //search by name
+                for(int i = 0; i < full.size(); i++)
                 {
-                    temp = full[i];
-                    ret.push_back(temp);
-                }
-            }
-            break;
-        case 1:
-            //search by ingredient
-            for(int i = 0; i < full.size(); i++)
-            {
-                vector<string> tempList = full[i].getIngredientList();
-                for(int j = 0; j < tempList.size(); j++)
-                {
-                    if(toLower(tempList[j]).find(toLower(searchWord)) != string::npos)
+                    if(toLower(full[i].getName()).find(toLower(searchWord)) != string::npos)
                     {
-                        check = true;
+                        temp = full[i];
+                        narrow.push_back(temp);
                     }
                 }
-                if(check)
+                break;
+            case 2:
+                //search by ingredient
+                for(int i = 0; i < full.size(); i++)
                 {
-                    temp = full[i];
-                    ret.push_back(temp);
-                    check = false;
+                    vector<string> tempList = full[i].getIngredientList();
+                    for(int j = 0; j < tempList.size(); j++)
+                    {
+                        if(toLower(tempList[j]).find(toLower(searchWord)) != string::npos)
+                        {
+                            check = true;
+                        }
+                    }
+                    if(check)
+                    {
+                        temp = full[i];
+                        narrow.push_back(temp);
+                        check = false;
+                    }
                 }
-            }
-            break;
-        case 2:
-            //search by garnish
-            for(int i = 0; i < full.size(); i++)
-            {
-                if(toLower(full[i].getGarnish()).find(toLower(searchWord)) != string::npos)
+                break;
+            case 3:
+                //search by garnish
+                for(int i = 0; i < full.size(); i++)
                 {
-                    temp = full[i];
-                    ret.push_back(temp);
+                    if(toLower(full[i].getGarnish()).find(toLower(searchWord)) != string::npos)
+                    {
+                        temp = full[i];
+                        narrow.push_back(temp);
+                    }
                 }
-            }
-            break;
-        case 3:
-            //search by glass
-            for(int i = 0; i < full.size(); i++)
-            {
-                if(toLower(full[i].getGlass()).find(toLower(searchWord)) != string::npos)
+                break;
+            case 4:
+                //search by glass
+                for(int i = 0; i < full.size(); i++)
                 {
-                    temp = full[i];
-                    ret.push_back(temp);
+                    if(toLower(full[i].getGlass()).find(toLower(searchWord)) != string::npos)
+                    {
+                        temp = full[i];
+                        narrow.push_back(temp);
+                    }
                 }
-            }
-            break;
-        default:
-            break;
+                break;
+            default:
+                break;
+        }
+        printRecipeList(narrow);
     }
-    return ret;
 }
 
 //edit Recipe by each variable
-void editRecipe(vector<Recipe> full, int ID)
+void editRecipe(Recipe & R)
 {
-    //shits super fucked yo
     string s = "";
-    Recipe temp = full[ID];
-
-    string tempName;
-    vector<string> tempIngredient = temp.getIngredientList();
-    string tempPrepStyle;
-    string tempIceStyle;
-    string tempGarnish;
-    string tempGlass;
-    string tempInstructions;
+    vector<string> tempIngredient = R.getIngredientList();
 
     int option = 1;
     int list = 1;
 
     while(option != 0)
     {
-        printRecipe(temp);
-        cout << "What would you like to edit? (Type the corresponding number and hit enter or 0 to quit)\n";
-        cout << "(1)\tName\n";
-        cout << "(2)\tIngredient List\n";
-        cout << "(3)\tPreperation Style\n";
-        cout << "(4)\tIce Style\n";
-        cout << "(5)\tGarnish\n";
-        cout << "(6)\tGlass\n";
-        cout << "(7)\tInstructions\n";
+        printRecipe(R);
+        cout << "What would you like to edit? (Type the corresponding number and hit enter)\n";
+        cout << "(1) Name\n";
+        cout << "(2) Ingredient List\n";
+        cout << "(3) Preperation Style\n";
+        cout << "(4) Ice Style\n";
+        cout << "(5) Garnish\n";
+        cout << "(6) Glass\n";
+        cout << "(7) Instructions\n";
+        cout << "(0) Quit\n";
         cin >> option;
 
         switch (option)
@@ -302,10 +357,11 @@ void editRecipe(vector<Recipe> full, int ID)
                 break;
             case 1:
                 //edit name
-                cout << "Current Name:\t\t" << temp.getName() << endl;
+                cout << "Current Name:\t\t" << R.getName() << endl;
                 cout << "Change to:";
-                cin >> tempName;
-                temp.setName(tempName);
+                cin.ignore(1, '\n');
+                getline(cin, s);
+                R.setName(s);
                 break;
             case 2:
                 //edit ingredient list
@@ -337,49 +393,56 @@ void editRecipe(vector<Recipe> full, int ID)
                                 cout << "Enter the value, unit, and ingredient you would like to change to and press enter.\n";
                                 getline(cin, tempIngredient[list - 1]);
                             }
-                            temp.setIngredientList(tempIngredient);
+                            R.setIngredientList(tempIngredient);
                         }
                     }
                 }
                 break;
             case 3:
                 //edit prep style
-                cout << "Current Preperation Style:\t\t" << temp.getPrepStyle() << endl;
+                cout << "Current Preperation Style:\t\t" << R.getPrepStyle() << endl;
                 cout << "Change to:";
-                cin >> tempPrepStyle;
-                temp.setPrepStyle(tempPrepStyle);
+                cin.ignore(1, '\n');
+                getline(cin, s);
+                R.setPrepStyle(s);
                 break;
             case 4:
                 //edit ice style
-                cout << "Current Ice Style:\t\t" << temp.getIceStyle() << endl;
+                cout << "Current Ice Style:\t\t" << R.getIceStyle() << endl;
                 cout << "Change to:";
-                cin >> tempIceStyle;
-                temp.setIceStyle(tempIceStyle);
+                cin.ignore(1, '\n');
+                getline(cin, s);
+                R.setIceStyle(s);
                 break;
             case 5:
                 //edit garnish
-                cout << "Current Garnish:\t\t" << temp.getGarnish() << endl;
+                cout << "Current Garnish:\t\t" << R.getGarnish() << endl;
                 cout << "Change to:";
-                cin >> tempGarnish;
-                temp.setGarnish(tempGarnish);
+                cin.ignore(1, '\n');
+                getline(cin, s);
+                R.setGarnish(s);
                 break;
             case 6:
                 //edit glass
-                cout << "Current Glass:\t\t" << temp.getGlass() << endl;
+                cout << "Current Glass:\t\t" << R.getGlass() << endl;
                 cout << "Change to:";
-                cin >> tempGlass;
-                temp.setGlass(tempGlass);
+                cin.ignore(1, '\n');
+                getline(cin, s);
+                R.setGlass(s);
                 break;
             case 7:
                 //edit instructions
-                cout << "Current Instructions:\t\t" << temp.getInstructions() << endl;
+                cout << "Current Instructions:\t\t" << R.getInstructions() << endl;
                 cout << "Change to:";
-                cin >> tempInstructions;
-                temp.setInstructions(tempInstructions);
+                cin.ignore(1, '\n');
+                getline(cin, s);
+                R.setInstructions(s);
                 break;
             default:
+                cout << "You fucked up try again" << endl;
                 break;
         }
+        s = "";
     }
 }
 
@@ -428,7 +491,7 @@ void saveRecipe(vector<Recipe> full, string filename)
     fout.close();
 }
 
-//prints list of all recipes in vector full
+//prints recipe R to output stream
 void printRecipe(Recipe R)
 {
     vector<string> temp = R.getIngredientList();
@@ -469,6 +532,13 @@ void printRecipe(Recipe R)
     if(R.getInstructions().length() != 0)
         cout << R.getInstructions();
     cout << endl << endl;
+}
+
+//prints list of recipes in vector full to output stream
+void printRecipeList(vector<Recipe> full)
+{
+    for(int i = 0; i < full.size(); i++)
+        printRecipe(full[i]);
 }
 
 //variable specified constructor
