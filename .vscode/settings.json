@@ -2,6 +2,11 @@
     "files.associations": {
         "xstring": "cpp",
         "vector": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "system_error": "cpp",
+        "xlocale": "cpp",
+        "ostream": "cpp",
+        "ios": "cpp",
+        "iomanip": "cpp"
     }
 }
