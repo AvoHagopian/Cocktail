@@ -3,6 +3,7 @@
 #include <fstream>
 #include <cmath>
 #include <vector>
+#include <iomanip>
 
 using namespace std;
 
@@ -41,7 +42,7 @@ public:
     void setGlass(string glass) {   this->glass = glass;    };
     void setInstructions(string instructions) { this->instructions = instructions;  };
 
-    string toString();
+    //string toString();
 };
 
 class Ingredient
@@ -71,7 +72,7 @@ void loadRecipe(vector<Recipe> &full, string filename);
 vector<Recipe> searchRecipe(string searchWord, vector<Recipe> full, int option);
 void editRecipe(vector<Recipe> full, int ID);
 void saveRecipe(vector<Recipe> full, string filename);
-void printRecipe(vector<Recipe> full);
+void printRecipe(Recipe full);
 string toLower(string s);
 
 int main(void)
@@ -81,8 +82,9 @@ int main(void)
     loadRecipe(full, filename);
     //printRecipe(searchRecipe("collins", full, 3));
     //saveRecipe();
-    editRecipe(full, 69);
-    printRecipe(full);
+    //editRecipe(full, 69);
+    for(int i = 0; i < full.size(); i++)
+        printRecipe(full[i]);
     return 0;
 }
 
@@ -282,7 +284,7 @@ void editRecipe(vector<Recipe> full, int ID)
 
     while(option != 0)
     {
-        cout << temp.toString() << endl;
+        printRecipe(temp);
         cout << "What would you like to edit? (Type the corresponding number and hit enter or 0 to quit)\n";
         cout << "(1)\tName\n";
         cout << "(2)\tIngredient List\n";
@@ -427,10 +429,46 @@ void saveRecipe(vector<Recipe> full, string filename)
 }
 
 //prints list of all recipes in vector full
-void printRecipe(vector<Recipe> full)
+void printRecipe(Recipe R)
 {
-    for(int i = 0; i < full.size(); i++)
-        cout << full[i].toString() << endl;
+    vector<string> temp = R.getIngredientList();
+
+    cout << left << setw(24) << "ID:";
+    cout << to_string(R.getID()) << endl;
+
+    cout << left << setw(24) << "Name:";
+    cout << R.getName() << endl;
+
+    cout << left << setw(24) << "Ingredient List:";
+    cout << temp[0] << endl;
+    for(int i = 1; i < temp.size(); i++)
+    {
+        cout << left << setw(24) << "";
+        cout << temp[i] << endl;
+    }
+
+    cout << left << setw(24) << "Preperation Style:";
+    cout << R.getPrepStyle() << endl;
+
+    cout << left << setw(24) << "Ice Style:";
+    if(R.getIceStyle().length() != 0)
+        cout << R.getIceStyle();
+    cout << endl;
+
+    cout << left << setw(24) << "Garnish:";
+    if(R.getGarnish().length() != 0)
+        cout << R.getGarnish();
+    cout << endl;
+
+    cout << left << setw(24) << "Glass:";
+    if(R.getGlass().length() != 0)
+        cout << R.getGlass();
+    cout << endl;
+
+    cout << left << setw(24) << "Instructions:";
+    if(R.getInstructions().length() != 0)
+        cout << R.getInstructions();
+    cout << endl << endl;
 }
 
 //variable specified constructor
@@ -493,45 +531,6 @@ bool Recipe::operator< (const Recipe &other)
         return false;
     else
         return true;
-}
-
-//convert Recipe object to string
-string Recipe::toString()
-{
-    char end = '\n';
-    string ret = "";
-
-    ret += "ID:\t\t\t\t\t" + to_string(ID) + end;
-
-    ret += "Name:\t\t\t\t" + name + end;
-
-    ret += "Ingredient List:\t" + ingredientList[0] + end;
-    for(int i = 1; i < ingredientList.size(); i++)
-        ret += "\t\t\t\t\t" + ingredientList[i] + end;
-
-    ret += "Prep Style:\t\t\t" + prepStyle + end;
-
-    ret += "Ice Style:\t\t\t";
-    if(iceStyle.length() != 0)
-        ret += iceStyle;
-    ret += end;
-
-    ret += "Garnish:\t\t\t";
-    if(garnish.length() != 0)
-        ret += garnish;
-    ret += end;
-    
-    ret += "Glass:\t\t\t\t";
-    if(glass.length() != 0)
-        ret += glass;
-    ret += end;
-    
-    ret += "Instructions:\t\t";
-    if(instructions.length() != 0)
-        ret += instructions;
-    ret += end;
-
-    return ret;
 }
 
 //returns object Ingredient as a string
