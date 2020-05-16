@@ -13,9 +13,9 @@ private:
     string unit;
     string ingredient;
 public:
-    Ingredient();
     Ingredient(double amount, string unit, string ingredient);
     Ingredient(const Ingredient &other);
+    Ingredient();
     Ingredient operator=(const Ingredient &other);
 
     double getAmount(){ return amount;  };
