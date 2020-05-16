@@ -8,29 +8,6 @@
 
 using namespace std;
 
-/*class Ingredient
-{
-private:
-    double amount;
-    string unit;
-    string ingredient;
-public:
-    Ingredient();
-    Ingredient(double amount, string unit, string ingredient);
-    Ingredient(const Ingredient &other);
-    Ingredient operator=(const Ingredient &other);
-
-    double getAmount(){ return amount;  };
-    string getUnit(){   return unit;    };
-    string getIngredient(){ return ingredient;  };
-
-    void setAmount(double amount){  this->amount = amount;  }
-    void setUnit(string unit){  this->unit = unit;  }
-    void setIngredient(string ingredient){  this->ingredient = ingredient;  }
-
-    string toString();
-};*/
-
 void loadRecipe(vector<Recipe> &full, string filename);
 void searchRecipe(vector<Recipe> full);
 void editRecipe(Recipe & R);
@@ -520,15 +497,3 @@ string toLower(string s)
     }
     return ret;
 }
-
-/*//returns object Ingredient as a string
-string Ingredient::toString()
-{
-    string s = "";
-    if(amount > 0)
-        s += to_string(amount);
-    if(unit.compare("NA") != 0)
-        s += unit;
-    s += ingredient;
-    return s;
-}*/

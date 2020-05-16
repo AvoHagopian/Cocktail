@@ -4,6 +4,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "ingredient.h"
+
 using namespace std;
 
 class Recipe
