@@ -233,7 +233,7 @@ void searchRecipe(vector<Recipe> full)
                 break;
             case 2:
                 //search by ingredient
-                for(int i = 0; i < full.size(); i++)
+                /*for(int i = 0; i < full.size(); i++)
                 {
                     vector<string> tempList = full[i].getIngredientList();
                     for(int j = 0; j < tempList.size(); j++)
@@ -250,7 +250,7 @@ void searchRecipe(vector<Recipe> full)
                         check = false;
                     }
                 }
-                break;
+                break;*/
             case 3:
                 //search by garnish
                 for(int i = 0; i < full.size(); i++)
@@ -284,10 +284,13 @@ void searchRecipe(vector<Recipe> full)
 void editRecipe(Recipe & R)
 {
     string s = "";
-    vector<string> tempIngredient = R.getIngredientList();
+    vector<Ingredient> tempIngredientList = R.getIngredientList();
+    Ingredient tempIngredientObject;
 
     int option = 1;
     int list = 1;
+
+    int oops = 0;
 
     while(option != 0)
     {
@@ -321,32 +324,47 @@ void editRecipe(Recipe & R)
                 while(list != 0)
                 {
                     cout << "Current Ingredient List:\n";
-                    for(int i = 0; i < tempIngredient.size(); i++)
-                        cout << "(" << i + 1 << ")\t" << tempIngredient[i] << endl;
+                    for(int i = 0; i < tempIngredientList.size(); i++)
+                        cout << "(" << i + 1 << ")\t" << tempIngredientList[i].toString() << endl;
 
                     cout << "If you wish to change a specific ingredient, type the number before the ingredient.\n";
-                    cout << "If you wish to add an ingredient, type " << tempIngredient.size() + 1 << endl;
+                    cout << "If you wish to add an ingredient, type " << tempIngredientList.size() + 1 << endl;
                     cout << "(If you wish to quit, type 0)\n";
                     cin >> list;
                     cin.ignore(1, '\n');
-                    if(list < 0 || list > tempIngredient.size() + 1)
+                    if(list < 0 || list > tempIngredientList.size() + 1)
                         cout << "Invalid option. Please choose again.\n";
                     else
                     {
                         if(list != 0)
                         {
-                            if(list == tempIngredient.size() + 1)
+                            if(list == tempIngredientList.size() + 1)
                             {
                                 cout << "Enter the value, unit, and ingredient you would like to add and press enter.\n";
                                 getline(cin, s);
-                                tempIngredient.push_back(s);
+                                oops = tempIngredientObject.setString(s);
+                                if(oops != 0)
+                                {
+                                    cout << "Invalid ingredient entry" << endl;
+                                    break;
+                                }
+                                else
+                                    tempIngredientList.push_back(tempIngredientObject);
                             }
                             else
                             {
                                 cout << "Enter the value, unit, and ingredient you would like to change to and press enter.\n";
-                                getline(cin, tempIngredient[list - 1]);
+                                getline(cin, s);
+                                oops = tempIngredientObject.setString(s);
+                                if(oops != 0)
+                                {
+                                    cout << "Invalid ingredient entry" << endl;
+                                    break;
+                                }
+                                else
+                                    tempIngredientList[list - 1] = tempIngredientObject;
                             }
-                            R.setIngredientList(tempIngredient);
+                            R.setIngredientList(tempIngredientList);
                         }
                     }
                 }
@@ -402,7 +420,7 @@ void editRecipe(Recipe & R)
 //saves list of all vectors full in file filename
 void saveRecipe(vector<Recipe> full, string filename)
 {
-    vector<string> temp;
+    vector<Ingredient> temp;
     ofstream fout(filename, ofstream::out);
     
     for(int i = 0; i < full.size(); i++)
@@ -412,26 +430,11 @@ void saveRecipe(vector<Recipe> full, string filename)
         fout << full[i].getName() + ',';
 
         fout << '"';
-        if(temp[0][0] == ' ')
-            fout << temp[0].substr(1);
-        else
+        fout << temp[0].toString();
+        for(int j = 1; i < temp.size(); i++)
         {
-            if(temp[0][0] == '.')
-                fout << "0" + temp[0];
-            else
-                fout << temp[0];
-        }
-        for(int j = 1; j < temp.size(); j++)
-        {
-            if(temp[j][0] == ' ')
-                fout << "\n" + temp[j].substr(1);
-            else
-            {
-                if(temp[j][0] == '.')
-                    fout << "\n0" + temp[j];
-                else
-                    fout << "\n" + temp[j];
-            }
+            fout << '\n';
+            fout << temp[j].toString();
         }
         fout << "\",";
 
@@ -447,7 +450,7 @@ void saveRecipe(vector<Recipe> full, string filename)
 //prints recipe R to output stream
 void printRecipe(Recipe R)
 {
-    vector<string> temp = R.getIngredientList();
+    vector<Ingredient> temp = R.getIngredientList();
 
     cout << left << setw(24) << "ID:";
     cout << to_string(R.getID()) << endl;
@@ -456,11 +459,11 @@ void printRecipe(Recipe R)
     cout << R.getName() << endl;
 
     cout << left << setw(24) << "Ingredient List:";
-    cout << temp[0] << endl;
+    cout << temp[0].toString() << endl;
     for(int i = 1; i < temp.size(); i++)
     {
         cout << left << setw(24) << "";
-        cout << temp[i] << endl;
+        cout << temp[i].toString() << endl;
     }
 
     cout << left << setw(24) << "Preperation Style:";

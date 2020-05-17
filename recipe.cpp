@@ -1,7 +1,7 @@
 #include "recipe.h"
 
 //variable specified constructor
-Recipe::Recipe(int ID, string name, vector<string> ingredientList, string prepStyle, string iceStyle, string garnish, string glass, string instructions)
+Recipe::Recipe(int ID, string name, vector<Ingredient> ingredientList, string prepStyle, string iceStyle, string garnish, string glass, string instructions)
 {
     this->ID = ID;
     this->name = name;
