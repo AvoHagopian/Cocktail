@@ -25,6 +25,7 @@ public:
     void setAmount(double amount){  this->amount = amount;  }
     void setUnit(string unit){  this->unit = unit;  }
     void setIngredient(string ingredient){  this->ingredient = ingredient;  }
+    int setString(const string &ingredient);
 
     string toString();
 };

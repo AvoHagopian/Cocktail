@@ -89,16 +89,18 @@ void loadRecipe(vector<Recipe> & full, string filename)
     int comma = 0;
     string temp = "";
     char c;
+    int oops = 0;
     
     full.clear();
     int tempID;
     string tempName;
-    vector<string> tempIngredient;
     string tempPrepStyle;
     string tempIceStyle;
     string tempGarnish;
     string tempGlass;
     string tempInstructions;
+    vector<Ingredient> tempIngredientList;
+    Ingredient tempIngredientObject;
 
     while (fin.peek() != EOF)
     {
@@ -129,7 +131,8 @@ void loadRecipe(vector<Recipe> & full, string filename)
                         tempName = temp;
                         break;
                     case 1:
-                        tempIngredient.push_back(temp);
+                        oops += tempIngredientObject.setString(temp);
+                        tempIngredientList.push_back(tempIngredientObject);
                         break;
                     case 2:
                         tempPrepStyle = temp;
@@ -157,7 +160,8 @@ void loadRecipe(vector<Recipe> & full, string filename)
             case '\n':
                 if (quote != 0)
                 {
-                    tempIngredient.push_back(temp);
+                    oops += tempIngredientObject.setString(temp);
+                    tempIngredientList.push_back(tempIngredientObject);
                     temp = "";
                     break;
                 }
@@ -172,11 +176,18 @@ void loadRecipe(vector<Recipe> & full, string filename)
                 break;
             }
         }
-        full.push_back(Recipe(tempID, tempName, tempIngredient, tempPrepStyle, tempIceStyle, tempGarnish, tempGlass, tempInstructions));
+        if(oops != 0)
+        {
+            cout << "Recipe " << tempID << ": " << tempName << " has " << oops << " problem(s) with its ingredients. It has not been loaded." << endl;
+            oops = 0;
+        }
+        else
+            full.push_back(Recipe(tempID, tempName, tempIngredientList, tempPrepStyle, tempIceStyle, tempGarnish, tempGlass, tempInstructions));
+        
         quote = 0;
         comma = 0;
         temp = "";
-        tempIngredient.clear();
+        tempIngredientList.clear();
     }
 
     fin.close();
