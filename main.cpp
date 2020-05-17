@@ -197,9 +197,11 @@ void loadRecipe(vector<Recipe> & full, string filename)
 void searchRecipe(vector<Recipe> full)
 {
     vector<Recipe> narrow;
+    vector<Ingredient> tempIngredientList;
     Recipe temp;
     bool check = false;
     int option = 0;
+    int pre = 0;
     string searchWord = "";
 
     cout << "What would you like to search by? (Type the corresponding value)" << endl;
@@ -213,10 +215,12 @@ void searchRecipe(vector<Recipe> full)
         cout << "Invalid search option, returning to main menu" << endl;
     else
     {
-        cout << "Type in search phrase and hit enter:";
-
-        cin.ignore(1, '\n');
-        getline(cin, searchWord);
+        if(option != '2')
+        {
+            cout << "Type in search phrase and hit enter:";
+            cin.ignore(1, '\n');
+            getline(cin, searchWord);
+        }
 
         switch(option)
         {
@@ -233,24 +237,49 @@ void searchRecipe(vector<Recipe> full)
                 break;
             case 2:
                 //search by ingredient
-                /*for(int i = 0; i < full.size(); i++)
                 {
-                    vector<string> tempList = full[i].getIngredientList();
-                    for(int j = 0; j < tempList.size(); j++)
+                    //take in search word as a vector of strings
+                    vector<string> searchWords;
+                    int count = 0;
+                    cout << "Type in each ingredient you would like to search for seperated by a space and hit enter." << endl;
+                    cin.ignore(1, '\n');
+                    getline(cin, searchWord);
+                    for(int i = 0; i < searchWord.length(); i++)
                     {
-                        if(toLower(tempList[j]).find(toLower(searchWord)) != string::npos)
+                        if(searchWord[i] == ' ')
                         {
-                            check = true;
+                            searchWords.push_back(searchWord.substr(pre, i - pre));
+                            i++;
+                            pre = i;
+                        }
+                        searchWords.push_back(searchWord.substr(pre, searchWord.length() - pre));
+                    }
+
+                    //search each recipe for vector of strings
+                    for(int i = 0; i < full.size(); i++)
+                    {
+                        tempIngredientList = full[i].getIngredientList();
+                        for(int j = 0; j < tempIngredientList.size(); j++)
+                        {
+                            for(int k = 0; k < searchWords.size(); k++)
+                            {
+                                if(toLower(tempIngredientList[j].toString()).find(toLower(searchWords[k])) != string::npos)
+                                {
+                                    count++;
+                                    k = searchWords.size();
+                                }
+                            }
+                        }
+                        if(count == tempIngredientList.size())
+                        {
+                            temp = full[i];
+                            narrow.push_back(temp);
+                            count = 0;
+                            tempIngredientList.clear();
                         }
                     }
-                    if(check)
-                    {
-                        temp = full[i];
-                        narrow.push_back(temp);
-                        check = false;
-                    }
+                    break;
                 }
-                break;*/
             case 3:
                 //search by garnish
                 for(int i = 0; i < full.size(); i++)
@@ -274,6 +303,7 @@ void searchRecipe(vector<Recipe> full)
                 }
                 break;
             default:
+                cout << option << " is not a valid search option." << endl;
                 break;
         }
         printRecipeList(narrow);
