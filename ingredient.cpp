@@ -38,9 +38,15 @@ string Ingredient::toString()
 {
     string s = "";
     if(amount > 0)
+    {
         s += to_string(amount);
+        s += ' ';
+    }
     if(unit.compare("NULL") != 0)
+    {
         s += unit;
+        s += ' ';
+    }
     s += ingredient;
     return s;
 }

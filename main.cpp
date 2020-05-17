@@ -215,7 +215,7 @@ void searchRecipe(vector<Recipe> full)
         cout << "Invalid search option, returning to main menu" << endl;
     else
     {
-        if(option != '2')
+        if(option != 2)
         {
             cout << "Type in search phrase and hit enter:";
             cin.ignore(1, '\n');
@@ -274,9 +274,9 @@ void searchRecipe(vector<Recipe> full)
                         {
                             temp = full[i];
                             narrow.push_back(temp);
-                            count = 0;
                             tempIngredientList.clear();
                         }
+                        count = 0;
                     }
                     break;
                 }
